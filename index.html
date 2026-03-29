@@ -12,7 +12,7 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen transition-colors">
+<body class="bg-zinc-950 text-white min-h-screen transition-all duration-300">
   <div class="max-w-4xl mx-auto px-4 py-8">
     <!-- Header -->
     <div class="flex justify-between items-center mb-8">
@@ -22,18 +22,19 @@
       </div>
       <div class="flex items-center gap-3">
         <button onclick="toggleTheme()" id="theme-toggle"
-                class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 rounded-2xl flex items-center gap-2 text-sm font-medium">
-          <span id="theme-text">☀️ Light</span>
+                class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 rounded-2xl flex items-center gap-2 text-sm font-medium transition">
+          <span id="theme-icon">🌙</span>
+          <span id="theme-text">Dark</span>
         </button>
         <button onclick="clearChat()" 
-                class="px-4 py-2 bg-zinc-900 hover:bg-red-500/10 hover:text-red-400 rounded-2xl flex items-center gap-2 text-sm font-medium">
-          🗑️ Clear Chat
+                class="px-4 py-2 bg-zinc-900 hover:bg-red-500/10 hover:text-red-400 rounded-2xl flex items-center gap-2 text-sm font-medium transition">
+          🗑️ Clear
         </button>
       </div>
     </div>
 
     <!-- Chat Container -->
-    <div id="chat" class="bg-zinc-900 rounded-3xl border border-zinc-800 h-[560px] flex flex-col overflow-hidden shadow-2xl">
+    <div id="chat" class="bg-zinc-900 border border-zinc-800 rounded-3xl h-[560px] flex flex-col overflow-hidden shadow-2xl transition-all">
       <div class="bg-zinc-950 px-6 py-4 border-b border-zinc-800 flex items-center gap-3">
         <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
         <p class="font-medium">SolAI is online • Ready to build your next token</p>
@@ -46,7 +47,7 @@
       <div class="p-5 border-t border-zinc-800">
         <form id="form" class="flex gap-3">
           <input id="input" type="text" 
-                 class="flex-1 bg-zinc-800 border border-zinc-700 focus:border-emerald-400 rounded-3xl px-6 py-4 text-white placeholder-zinc-400 focus:outline-none"
+                 class="flex-1 bg-zinc-800 border border-zinc-700 focus:border-emerald-400 rounded-3xl px-6 py-4 text-white placeholder-zinc-400 focus:outline-none transition"
                  placeholder="Ask anything about your Solana token...">
           <button type="submit" 
                   class="bg-emerald-500 hover:bg-emerald-600 px-8 rounded-3xl font-medium transition">Send</button>
@@ -59,38 +60,38 @@
       <p class="text-zinc-400 text-sm mb-4 font-medium">Quick start — tap any card</p>
       <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
         <button onclick="usePrompt('Give me a complete step-by-step guide to launch a new meme coin on Pump.fun right now')" 
-                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all">
-          <div class="text-emerald-400 text-lg mb-1">🚀</div>
+                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all group">
+          <div class="text-emerald-400 text-lg mb-1 group-hover:scale-110 transition">🚀</div>
           <p class="font-semibold">Pump.fun Launch Guide</p>
-          <p class="text-xs text-zinc-400">Full checklist + timing tips</p>
+          <p class="text-xs text-zinc-400">Full checklist + timing</p>
         </button>
         <button onclick="usePrompt('Generate full SPL token metadata JSON ready for Raydium')" 
-                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all">
-          <div class="text-emerald-400 text-lg mb-1">📄</div>
+                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all group">
+          <div class="text-emerald-400 text-lg mb-1 group-hover:scale-110 transition">📄</div>
           <p class="font-semibold">Token Metadata JSON</p>
-          <p class="text-xs text-zinc-400">Instant copy-paste ready</p>
+          <p class="text-xs text-zinc-400">Copy-paste ready</p>
         </button>
         <button onclick="usePrompt('How to make a fair launch on Solana and avoid rug pull accusations')" 
-                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all">
-          <div class="text-emerald-400 text-lg mb-1">🛡️</div>
+                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all group">
+          <div class="text-emerald-400 text-lg mb-1 group-hover:scale-110 transition">🛡️</div>
           <p class="font-semibold">Fair Launch Tips</p>
-          <p class="text-xs text-zinc-400">Best practices 2026</p>
+          <p class="text-xs text-zinc-400">Best practices</p>
         </button>
         <button onclick="usePrompt('Write a viral Twitter thread for my new Solana meme coin')" 
-                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all">
-          <div class="text-emerald-400 text-lg mb-1">🐦</div>
+                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all group">
+          <div class="text-emerald-400 text-lg mb-1 group-hover:scale-110 transition">🐦</div>
           <p class="font-semibold">Marketing Twitter Thread</p>
           <p class="text-xs text-zinc-400">Ready to post</p>
         </button>
         <button onclick="usePrompt('Help me revoke mint & freeze authority on my SPL token')" 
-                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all">
-          <div class="text-emerald-400 text-lg mb-1">🔓</div>
+                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all group">
+          <div class="text-emerald-400 text-lg mb-1 group-hover:scale-110 transition">🔓</div>
           <p class="font-semibold">Revoke Authorities</p>
           <p class="text-xs text-zinc-400">Security checklist</p>
         </button>
         <button onclick="usePrompt('Brainstorm 5 strong meme coin concepts with narrative for Solana')" 
-                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all">
-          <div class="text-emerald-400 text-lg mb-1">💡</div>
+                class="bg-zinc-900 hover:bg-emerald-500/10 hover:border-emerald-400 border border-zinc-800 rounded-3xl p-5 text-left transition-all group">
+          <div class="text-emerald-400 text-lg mb-1 group-hover:scale-110 transition">💡</div>
           <p class="font-semibold">Brainstorm Coin Ideas</p>
           <p class="text-xs text-zinc-400">With strong narrative</p>
         </button>
@@ -104,8 +105,7 @@
   </div>
 
   <script>
-    // === PUT YOUR GROQ KEY HERE ===
-    const GROQ_API_KEY = "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";
+    const GROQ_API_KEY = "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";   // ← Replace with your real key here
 
     const systemPrompt = `You are SolAI Agent — the ultimate AI for Solana token developers.
 You know everything about Pump.fun, bonding curves, Raydium liquidity, Jupiter, Anchor Rust, SPL tokens, metadata, revoking authorities, fair launches, marketing, TG bots, Twitter raids, KOLs, and rug-pull prevention.
@@ -113,21 +113,17 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
 
     let messages = [];
 
-    // Load saved chat
     function loadChat() {
       const saved = localStorage.getItem("solaiChat");
       if (saved) {
         messages = JSON.parse(saved);
-        renderMessages();
       } else {
-        // Welcome message on first visit
-        const welcome = {
+        messages = [{
           role: "assistant",
           content: "Hey dev 👋 I'm SolAI — your free AI co-founder for Solana tokens.\n\nWhat are we building today? Try the quick cards above or just ask anything."
-        };
-        messages = [welcome];
-        renderMessages();
+        }];
       }
+      renderMessages();
     }
 
     function saveChat() {
@@ -143,9 +139,9 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
         if (m.role === "assistant") {
           div.innerHTML = `
             <div class="max-w-[85%] bg-zinc-800 px-5 py-4 rounded-3xl relative group">
-              ${m.content}
+              ${m.content.replace(/\n/g, '<br>')}
               <button onclick="copyMessage(${i})" 
-                      class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 bg-zinc-700 hover:bg-zinc-600 text-xs px-2 py-1 rounded-xl transition">📋 Copy</button>
+                      class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 bg-zinc-700 hover:bg-zinc-600 text-xs px-2 py-1 rounded-xl transition">📋</button>
             </div>`;
         } else {
           div.innerHTML = `<div class="max-w-[85%] bg-emerald-500 px-5 py-4 rounded-3xl">${m.content}</div>`;
@@ -161,7 +157,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       renderMessages();
       document.getElementById("input").value = "";
 
-      // Loading
       const container = document.getElementById("messages");
       const loadingId = "loading-" + Date.now();
       const loadingDiv = document.createElement("div");
@@ -207,16 +202,15 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
 
     function copyMessage(index) {
       navigator.clipboard.writeText(messages[index].content);
-      // Optional: show toast
       const toast = document.createElement("div");
-      toast.textContent = "✅ Copied!";
-      toast.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#10b981;color:white;padding:10px 20px;border-radius:9999px;font-size:14px;";
+      toast.textContent = "✅ Copied to clipboard!";
+      toast.style.cssText = "position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#10b981;color:white;padding:12px 24px;border-radius:9999px;font-size:14px;z-index:100;";
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 1500);
+      setTimeout(() => toast.remove(), 1800);
     }
 
     function clearChat() {
-      if (confirm("Clear entire chat history?")) {
+      if (confirm("Clear all chat history?")) {
         localStorage.removeItem("solaiChat");
         messages = [];
         loadChat();
@@ -224,25 +218,27 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
     }
 
     function toggleTheme() {
-      if (document.documentElement.classList.contains("light")) {
-        document.documentElement.classList.remove("light");
-        document.getElementById("theme-text").textContent = "☀️ Light";
+      const isLight = document.documentElement.classList.toggle("light");
+      const icon = document.getElementById("theme-icon");
+      const text = document.getElementById("theme-text");
+      
+      if (isLight) {
+        icon.textContent = "☀️";
+        text.textContent = "Light";
       } else {
-        document.documentElement.classList.add("light");
-        document.getElementById("theme-text").textContent = "🌙 Dark";
+        icon.textContent = "🌙";
+        text.textContent = "Dark";
       }
     }
 
-    // Form submit
     document.getElementById("form").addEventListener("submit", function(e) {
       e.preventDefault();
       const input = document.getElementById("input").value;
       sendMessage(input);
     });
 
-    // Tailwind + load chat on start
+    // Initialize
     document.addEventListener("DOMContentLoaded", () => {
-      tailwind.config = { content: ["./**/*.{html,js}"] };
       loadChat();
     });
   </script>
