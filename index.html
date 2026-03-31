@@ -10,6 +10,27 @@
     body { font-family: 'Inter', sans-serif; }
     .message { animation: fadeIn 0.3s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Copy button style */
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #111;
+      color: #00ff9d;
+      border: 1px solid #00ff9d;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      cursor: pointer;
+      opacity: 0.85;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      opacity: 1;
+      background: #00ff9d;
+      color: #111;
+    }
   </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen">
@@ -28,6 +49,16 @@
 
     <!-- Chat Container -->
     <div id="chat" class="bg-zinc-900 border border-zinc-800 rounded-3xl h-[560px] flex flex-col overflow-hidden shadow-2xl">
+      
+      <!-- NEW: What's New Banner -->
+      <div class="bg-emerald-950/50 border-b border-emerald-400/30 px-6 py-3 text-sm flex items-center gap-2">
+        <span class="text-emerald-400">🚀</span>
+        <strong>What's New • March 31, 2026</strong>
+        <span class="flex-1"></span>
+        <span class="text-emerald-400 text-xs">• Copy buttons added on all code blocks</span>
+        <span class="text-emerald-400 text-xs">• Persistent chat history already live</span>
+      </div>
+
       <div class="bg-zinc-950 px-6 py-4 border-b border-zinc-800 flex items-center gap-3">
         <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
         <p class="font-medium">SolAI is online • Ready to build your next token</p>
@@ -46,7 +77,7 @@
       </div>
     </div>
 
-    <!-- Quick Start Cards - All 6 -->
+    <!-- Quick Start Cards -->
     <div class="mt-8">
       <p class="text-zinc-400 text-sm mb-4 font-medium">Quick start — tap any card</p>
       <div class="grid grid-cols-2 gap-3">
@@ -94,14 +125,14 @@
       </div>
     </div>
 
-        <p class="text-center text-xs text-zinc-500 mt-10">
+    <p class="text-center text-xs text-zinc-500 mt-10">
       Powered by Groq • 100% free • Made by @champion-ch • 
       <a href="https://x.com/solaiagent" target="_blank" class="text-emerald-400 hover:underline">Follow on X</a>
     </p>
   </div>
 
   <script>
-    const GROQ_API_KEY = "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";   // ← Replace with your real Groq key here
+    const GROQ_API_KEY = "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";
 
     const systemPrompt = `You are SolAI Agent — the ultimate AI for Solana token developers.
 You know everything about Pump.fun, bonding curves, Raydium liquidity, Jupiter, Anchor Rust, SPL tokens, metadata, revoking authorities, fair launches, marketing, TG bots, Twitter raids, KOLs, and rug-pull prevention.
@@ -129,8 +160,19 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       messages.forEach((m) => {
         const div = document.createElement("div");
         div.className = `flex ${m.role === "user" ? "justify-end" : "justify-start"} message`;
+        
         if (m.role === "assistant") {
-          div.innerHTML = `<div class="max-w-[85%] bg-zinc-800 px-5 py-4 rounded-3xl">${m.content.replace(/\n/g, '<br>')}</div>`;
+          let content = m.content.replace(/\n/g, '<br>');
+          // Auto-detect code blocks and add copy button
+          content = content.replace(/```([\s\S]*?)```/g, (match, code) => {
+            const cleanCode = code.trim();
+            return `
+              <div class="relative group">
+                <pre class="bg-zinc-950 p-4 rounded-2xl overflow-x-auto text-sm border border-zinc-700"><code>${cleanCode}</code></pre>
+                <button onclick="copyCode(this)" class="copy-btn">📋 Copy</button>
+              </div>`;
+          });
+          div.innerHTML = `<div class="max-w-[85%] bg-zinc-800 px-5 py-4 rounded-3xl">${content}</div>`;
         } else {
           div.innerHTML = `<div class="max-w-[85%] bg-emerald-500 px-5 py-4 rounded-3xl">${m.content}</div>`;
         }
@@ -138,6 +180,17 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       });
       container.scrollTop = container.scrollHeight;
     }
+
+    // New: Copy code function
+    window.copyCode = function(btn) {
+      const pre = btn.parentElement.querySelector("pre code");
+      const text = pre.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = "✅ Copied!";
+        setTimeout(() => { btn.textContent = original; }, 1500);
+      });
+    };
 
     async function sendMessage(userText) {
       if (!userText.trim()) return;
