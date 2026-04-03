@@ -31,53 +31,125 @@
       background: #00ff9d;
       color: #111;
     }
+
+    /* Modal */
+    .modal {
+      animation: modalPop 0.3s ease;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Mode pills */
+    .mode-pill {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen">
+  <!-- Projects Modal -->
+  <div id="projects-modal" onclick="if(event.target.id === 'projects-modal') hideProjectsModal()" 
+       class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div onclick="event.stopImmediatePropagation()" 
+         class="modal bg-zinc-900 w-full max-w-lg mx-4 rounded-3xl border border-zinc-700 shadow-2xl">
+      <div class="px-6 py-5 border-b border-zinc-700 flex items-center justify-between">
+        <h2 class="text-2xl font-semibold flex items-center gap-2">
+          📂 My Tokens
+          <span id="modal-project-count" class="text-xs bg-zinc-800 text-zinc-400 px-3 py-1 rounded-2xl font-mono"></span>
+        </h2>
+        <button onclick="hideProjectsModal()" 
+                class="text-zinc-400 hover:text-white text-3xl leading-none">×</button>
+      </div>
+      
+      <div class="p-6">
+        <!-- New Project Button -->
+        <button onclick="createNewProject()" 
+                class="w-full flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-3xl font-medium text-lg mb-6">
+          <span class="text-2xl">✚</span>
+          NEW TOKEN PROJECT
+        </button>
+
+        <!-- Projects List -->
+        <div id="projects-list" class="max-h-[420px] overflow-y-auto space-y-2 pr-2"></div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-zinc-700 text-xs text-zinc-500 flex justify-between items-center">
+        <div>Projects are saved in your browser (IndexedDB)</div>
+        <button onclick="hideProjectsModal()" class="text-emerald-400 hover:underline">Close</button>
+      </div>
+    </div>
+  </div>
+
   <div class="max-w-4xl mx-auto px-4 py-8">
     <!-- Header -->
     <div class="flex justify-between items-center mb-8">
-      <div>
+      <div class="flex items-center gap-3">
         <h1 class="text-5xl font-bold tracking-tight">SolAI Agent</h1>
-        <p class="text-emerald-400 text-xl">Your free AI co-founder for Solana tokens</p>
+        <div id="current-project-badge" onclick="showProjectsModal()" 
+             class="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 hover:border-emerald-400 rounded-3xl px-4 py-1 text-sm cursor-pointer transition-all">
+          <span id="current-project-name" class="font-medium text-emerald-400">My First Token</span>
+          <span class="text-emerald-400 text-lg leading-none">📂</span>
+        </div>
       </div>
-      <button onclick="clearChat()" 
-              class="px-5 py-2 bg-zinc-900 hover:bg-red-500/10 hover:text-red-400 rounded-2xl flex items-center gap-2 text-sm font-medium">
-        🗑️ Clear Chat
-      </button>
+      
+      <div class="flex items-center gap-3">
+        <button onclick="showProjectsModal()" 
+                class="px-5 py-2 bg-zinc-900 hover:bg-emerald-500/10 hover:text-emerald-400 rounded-2xl flex items-center gap-2 text-sm font-medium">
+          📂 Projects
+        </button>
+        <button onclick="clearChat()" 
+                class="px-5 py-2 bg-zinc-900 hover:bg-red-500/10 hover:text-red-400 rounded-2xl flex items-center gap-2 text-sm font-medium">
+          🗑️ Clear Chat
+        </button>
+      </div>
     </div>
 
     <!-- Chat Container -->
     <div id="chat" class="bg-zinc-900 border border-zinc-800 rounded-3xl h-[560px] flex flex-col overflow-hidden shadow-2xl">
       
-      <!-- NEW: What's New Banner -->
+      <!-- UPDATED: What's New Banner -->
       <div class="bg-emerald-950/50 border-b border-emerald-400/30 px-6 py-3 text-sm flex items-center gap-2">
         <span class="text-emerald-400">🚀</span>
-        <strong>What's New • March 31, 2026</strong>
+        <strong>What's New • April 3, 2026</strong>
         <span class="flex-1"></span>
-        <span class="text-emerald-400 text-xs">• Copy buttons added on all code blocks</span>
-        <span class="text-emerald-400 text-xs">• Persistent chat history already live</span>
+        <span class="text-emerald-400 text-xs">• Multi-project folders (My Tokens)</span>
+        <span class="text-emerald-400 text-xs">• 5 Agent Modes</span>
+        <span class="text-emerald-400 text-xs">• File uploads (code + metadata)</span>
+        <span class="text-emerald-400 text-xs">• Copy buttons on all code blocks</span>
       </div>
 
       <div class="bg-zinc-950 px-6 py-4 border-b border-zinc-800 flex items-center gap-3">
         <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
         <p class="font-medium">SolAI is online • Ready to build your next token</p>
+        
+        <!-- Mode Selector -->
+        <div class="ml-auto flex items-center gap-1 text-xs font-medium" id="mode-selector">
+          <!-- Populated by JS -->
+        </div>
       </div>
 
       <div id="messages" class="flex-1 p-6 overflow-y-auto space-y-6"></div>
 
       <div class="p-5 border-t border-zinc-800">
-        <form id="form" class="flex gap-3">
+        <form id="form" class="flex gap-3 items-center">
+          <!-- File Upload Button -->
+          <button type="button" onclick="triggerFileUpload()" 
+                  class="px-5 py-4 bg-zinc-800 hover:bg-zinc-700 rounded-3xl text-2xl flex items-center justify-center transition-all">
+            📎
+          </button>
+          
           <input id="input" type="text" 
                  class="flex-1 bg-zinc-800 border border-zinc-700 focus:border-emerald-400 rounded-3xl px-6 py-4 text-white placeholder-zinc-400 focus:outline-none"
                  placeholder="Ask anything about your Solana token...">
+          
           <button type="submit" 
                   class="bg-emerald-500 hover:bg-emerald-600 px-8 rounded-3xl font-medium">Send</button>
         </form>
       </div>
     </div>
 
-    <!-- Quick Start Cards -->
+    <!-- Quick Start Cards (100% unchanged) -->
     <div class="mt-8">
       <p class="text-zinc-400 text-sm mb-4 font-medium">Quick start — tap any card</p>
       <div class="grid grid-cols-2 gap-3">
@@ -131,32 +203,251 @@
     </p>
   </div>
 
+  <!-- Hidden file input -->
+  <input type="file" id="file-upload" accept=".rs,.json,.txt,.toml,.sol,.js,.ts,.md" class="hidden">
+
   <script>
     const GROQ_API_KEY = "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";
 
-    const systemPrompt = `You are SolAI Agent — the ultimate AI for Solana token developers.
+    const baseSystemPrompt = `You are SolAI Agent — the ultimate AI for Solana token developers.
 You know everything about Pump.fun, bonding curves, Raydium liquidity, Jupiter, Anchor Rust, SPL tokens, metadata, revoking authorities, fair launches, marketing, TG bots, Twitter raids, KOLs, and rug-pull prevention.
 Always give step-by-step help, generate code when asked, and act like a helpful co-founder. Be direct and based.`;
 
+    // Agent Modes
+    const modes = {
+      default: { label: "🤖 Default", suffix: "" },
+      builder: { label: "🛠️ Builder", suffix: "\n\nYou are in BUILDER MODE. Prioritize complete, production-ready Anchor Rust code, SPL token programs, tests, Cargo.toml, and deployment instructions." },
+      launch: { label: "🚀 Launch", suffix: "\n\nYou are in LAUNCH MODE. Focus on Pump.fun bonding curve strategy, Raydium liquidity pools, timing, fair launch checklists, and avoiding common mistakes." },
+      security: { label: "🔒 Security", suffix: "\n\nYou are in SECURITY MODE. Be extremely detailed about revoking authorities, rug vectors, audit tips, secure code practices, and authority checks." },
+      meme: { label: "🐦 Meme", suffix: "\n\nYou are in MEME MODE. Get creative with narratives, Twitter threads, meme ideas, community building, and viral marketing for Solana tokens." }
+    };
+
+    let db = null;
+    let projects = [];
+    let currentProjectId = null;
+    let currentMode = "default";
     let messages = [];
 
-    function loadChat() {
-      const saved = localStorage.getItem("solaiChat");
-      if (saved) {
-        messages = JSON.parse(saved);
-      } else {
-        messages = [{ role: "assistant", content: "Hey dev 👋 I'm SolAI — your free AI co-founder for Solana tokens.\n\nWhat are we building today? Try the quick cards above or just ask anything." }];
-      }
-      renderMessages();
+    // ==================== INDEXEDDB SETUP ====================
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open("SolAIProjects", 1);
+        request.onupgradeneeded = (e) => {
+          db = e.target.result;
+          if (!db.objectStoreNames.contains("projects")) {
+            const store = db.createObjectStore("projects", { keyPath: "id", autoIncrement: true });
+            store.createIndex("lastUsed", "lastUsed", { unique: false });
+          }
+        };
+        request.onsuccess = (e) => {
+          db = e.target.result;
+          resolve();
+        };
+        request.onerror = (e) => reject(e);
+      });
     }
 
-    function saveChat() {
-      localStorage.setItem("solaiChat", JSON.stringify(messages));
+    async function loadProjects() {
+      if (!db) return;
+      const tx = db.transaction("projects", "readonly");
+      const store = tx.objectStore("projects");
+      const request = store.getAll();
+      return new Promise((resolve) => {
+        request.onsuccess = () => {
+          projects = request.result || [];
+          // Sort by last used
+          projects.sort((a, b) => (b.lastUsed || 0) - (a.lastUsed || 0));
+          resolve(projects);
+        };
+      });
+    }
+
+    async function saveProjectToDB(project) {
+      if (!db || !project.id) return;
+      const tx = db.transaction("projects", "readwrite");
+      const store = tx.objectStore("projects");
+      store.put(project);
+      await new Promise((resolve) => { tx.oncomplete = resolve; });
+    }
+
+    async function createNewProject(name = null) {
+      const projectName = name || prompt("Name your new token project:", "My New Token #" + (projects.length + 1)) || "Untitled Project";
+      
+      const newProject = {
+        name: projectName,
+        messages: [{
+          role: "assistant",
+          content: "Hey dev 👋 Welcome to your new SolAI project!\n\nWhat are we building today? Try the quick cards or upload a file to get started."
+        }],
+        mode: "default",
+        lastUsed: Date.now()
+      };
+
+      const tx = db.transaction("projects", "readwrite");
+      const store = tx.objectStore("projects");
+      const request = store.add(newProject);
+      
+      request.onsuccess = async () => {
+        newProject.id = request.result;
+        await loadProjects();
+        switchProject(newProject.id);
+        hideProjectsModal();
+      };
+    }
+
+    async function switchProject(id) {
+      const project = projects.find(p => p.id === id);
+      if (!project) return;
+      
+      currentProjectId = id;
+      messages = project.messages || [];
+      currentMode = project.mode || "default";
+      
+      // Update UI
+      document.getElementById("current-project-name").textContent = project.name;
+      renderMessages();
+      renderModeSelector();
+      
+      // Update last used
+      project.lastUsed = Date.now();
+      await saveProjectToDB(project);
+      
+      hideProjectsModal();
+    }
+
+    async function deleteProject(id) {
+      if (!confirm("Delete this project permanently?")) return;
+      
+      const tx = db.transaction("projects", "readwrite");
+      const store = tx.objectStore("projects");
+      store.delete(id);
+      
+      await new Promise((resolve) => { tx.oncomplete = resolve; });
+      await loadProjects();
+      
+      if (currentProjectId === id) {
+        if (projects.length > 0) {
+          switchProject(projects[0].id);
+        } else {
+          createNewProject("My First Token");
+        }
+      } else {
+        renderProjectsList();
+      }
+    }
+
+    function renderProjectsList() {
+      const container = document.getElementById("projects-list");
+      container.innerHTML = "";
+      document.getElementById("modal-project-count").textContent = `${projects.length} projects`;
+      
+      if (projects.length === 0) {
+        container.innerHTML = `<div class="text-center py-12 text-zinc-500">No projects yet.<br>Click "NEW TOKEN PROJECT" above.</div>`;
+        return;
+      }
+      
+      projects.forEach(project => {
+        const isActive = project.id === currentProjectId;
+        const div = document.createElement("div");
+        div.className = `flex items-center justify-between px-5 py-4 rounded-3xl border ${isActive ? "border-emerald-400 bg-emerald-950/30" : "border-zinc-700 hover:border-zinc-500"} cursor-pointer`;
+        div.innerHTML = `
+          <div class="flex-1">
+            <div class="flex items-center gap-3">
+              <span class="font-semibold">${project.name}</span>
+              <span class="text-[10px] px-3 py-px bg-zinc-800 rounded-2xl">${modes[project.mode || "default"].label}</span>
+            </div>
+            <div class="text-xs text-zinc-500 mt-1">${new Date(project.lastUsed).toLocaleDateString()}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="event.stopImmediatePropagation(); switchProject(${project.id});" 
+                    class="text-emerald-400 text-sm px-4 py-2 rounded-2xl hover:bg-emerald-500/10">Open</button>
+            <button onclick="event.stopImmediatePropagation(); deleteProject(${project.id});" 
+                    class="text-red-400 hover:text-red-500 text-xl">🗑</button>
+          </div>
+        `;
+        div.onclick = () => switchProject(project.id);
+        container.appendChild(div);
+      });
+    }
+
+    function showProjectsModal() {
+      renderProjectsList();
+      document.getElementById("projects-modal").classList.remove("hidden");
+      document.getElementById("projects-modal").classList.add("flex");
+    }
+
+    function hideProjectsModal() {
+      const modal = document.getElementById("projects-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    // ==================== MODE SELECTOR ====================
+    function renderModeSelector() {
+      const container = document.getElementById("mode-selector");
+      container.innerHTML = Object.keys(modes).map(key => {
+        const mode = modes[key];
+        const active = key === currentMode ? "bg-emerald-500 text-white" : "bg-zinc-800 hover:bg-zinc-700";
+        return `
+          <button onclick="setMode('${key}')" 
+                  class="mode-pill ${active} px-4 py-1 rounded-3xl flex items-center gap-1 text-xs">
+            ${mode.label}
+          </button>`;
+      }).join("");
+    }
+
+    function setMode(modeKey) {
+      if (!modes[modeKey]) return;
+      currentMode = modeKey;
+      
+      // Save to current project
+      if (currentProjectId) {
+        const project = projects.find(p => p.id === currentProjectId);
+        if (project) {
+          project.mode = currentMode;
+          saveProjectToDB(project);
+        }
+      }
+      
+      renderModeSelector();
+      
+      // Optional: show a quick system message
+      const systemMsg = document.createElement("div");
+      systemMsg.className = "text-center text-[10px] text-emerald-400 py-1";
+      systemMsg.textContent = `🔄 Switched to ${modes[modeKey].label} mode`;
+      const messagesContainer = document.getElementById("messages");
+      messagesContainer.appendChild(systemMsg);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      setTimeout(() => systemMsg.remove(), 1800);
+    }
+
+    // ==================== CHAT FUNCTIONS (original + enhancements) ====================
+    function getCurrentSystemPrompt() {
+      return baseSystemPrompt + (modes[currentMode] ? modes[currentMode].suffix : "");
+    }
+
+    function loadChat() {
+      // This is now handled by project system
+      renderMessages();
+      renderModeSelector();
+    }
+
+    function saveCurrentProject() {
+      if (!currentProjectId) return;
+      const project = projects.find(p => p.id === currentProjectId);
+      if (project) {
+        project.messages = messages;
+        project.mode = currentMode;
+        project.lastUsed = Date.now();
+        saveProjectToDB(project);
+      }
     }
 
     function renderMessages() {
       const container = document.getElementById("messages");
       container.innerHTML = "";
+      
       messages.forEach((m) => {
         const div = document.createElement("div");
         div.className = `flex ${m.role === "user" ? "justify-end" : "justify-start"} message`;
@@ -174,6 +465,7 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
           });
           div.innerHTML = `<div class="max-w-[85%] bg-zinc-800 px-5 py-4 rounded-3xl">${content}</div>`;
         } else {
+          // User messages (including uploaded files)
           div.innerHTML = `<div class="max-w-[85%] bg-emerald-500 px-5 py-4 rounded-3xl">${m.content}</div>`;
         }
         container.appendChild(div);
@@ -181,7 +473,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       container.scrollTop = container.scrollHeight;
     }
 
-    // New: Copy code function
     window.copyCode = function(btn) {
       const pre = btn.parentElement.querySelector("pre code");
       const text = pre.textContent;
@@ -217,7 +508,10 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
           },
           body: JSON.stringify({
             model: "llama-3.3-70b-versatile",
-            messages: [{ role: "system", content: systemPrompt }, ...messages],
+            messages: [
+              { role: "system", content: getCurrentSystemPrompt() },
+              ...messages
+            ],
             temperature: 0.7,
             max_tokens: 1200
           })
@@ -229,11 +523,12 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
         document.getElementById(loadingId).remove();
         messages.push({ role: "assistant", content: aiReply });
         renderMessages();
-        saveChat();
+        saveCurrentProject();
       } catch (e) {
         document.getElementById(loadingId).remove();
-        messages.push({ role: "assistant", content: "Error connecting to Groq. Check your API key or internet connection." });
+        messages.push({ role: "assistant", content: "Error connecting to Groq. Check your internet or try again." });
         renderMessages();
+        saveCurrentProject();
       }
     }
 
@@ -243,23 +538,94 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
     }
 
     function clearChat() {
-      if (confirm("Clear all chat history?")) {
-        localStorage.removeItem("solaiChat");
-        messages = [];
-        loadChat();
+      if (confirm("Clear ALL messages in the current project?")) {
+        messages = [{
+          role: "assistant",
+          content: "Chat cleared. Ready to start fresh on this project 👋\n\nWhat are we building?"
+        }];
+        renderMessages();
+        saveCurrentProject();
       }
     }
 
+    // ==================== FILE UPLOAD ====================
+    function triggerFileUpload() {
+      document.getElementById("file-upload").click();
+    }
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      
+      reader.onload = function(ev) {
+        let content = ev.target.result;
+        
+        // Safety: truncate very large files
+        if (content.length > 15000) {
+          content = content.substring(0, 15000) + "\n\n... (file truncated for prompt size)";
+        }
+        
+        const userText = `📎 **Uploaded file**: ${file.name} (${(file.size / 1024).toFixed(1)} KB)\n\n\`\`\`\n${content}\n\`\`\``;
+        
+        // Auto-send the file content so AI can analyze it immediately
+        sendMessage(userText);
+        
+        // Reset input
+        e.target.value = "";
+      };
+      
+      // Read as text (all accepted files are text-based)
+      reader.readAsText(file);
+    }
+
+    // ==================== INITIALIZATION ====================
     document.getElementById("form").addEventListener("submit", function(e) {
       e.preventDefault();
       const input = document.getElementById("input").value.trim();
       if (input) sendMessage(input);
     });
 
-    // Initialize
-    document.addEventListener("DOMContentLoaded", () => {
+    // File input listener
+    document.getElementById("file-upload").addEventListener("change", handleFileUpload);
+
+    // Main app start
+    document.addEventListener("DOMContentLoaded", async () => {
+      await initDB();
+      await loadProjects();
+
+      // Backward compatibility: import old single-chat if it exists
+      const oldChat = localStorage.getItem("solaiChat");
+      if (oldChat && projects.length === 0) {
+        try {
+          const oldMessages = JSON.parse(oldChat);
+          const legacyProject = {
+            name: "Legacy Chat (Imported)",
+            messages: oldMessages,
+            mode: "default",
+            lastUsed: Date.now()
+          };
+          const tx = db.transaction("projects", "readwrite");
+          const store = tx.objectStore("projects");
+          store.add(legacyProject);
+          localStorage.removeItem("solaiChat");
+          await loadProjects();
+        } catch (e) {}
+      }
+
+      // If still no projects, create the first one
+      if (projects.length === 0) {
+        await createNewProject("My First Token");
+      } else {
+        // Load the most recently used project
+        switchProject(projects[0].id);
+      }
+
+      // Initial render
       loadChat();
     });
   </script>
 </body>
 </html>
+```​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
