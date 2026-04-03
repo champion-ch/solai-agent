@@ -11,6 +11,7 @@
     .message { animation: fadeIn 0.3s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
+    /* Copy button style */
     .copy-btn {
       position: absolute;
       top: 8px;
@@ -34,30 +35,22 @@
 </head>
 <body class="bg-zinc-950 text-white min-h-screen">
   <div class="max-w-4xl mx-auto px-4 py-8">
-
-    <!-- HEADER WITH HAMBURGER MENU -->
+    <!-- Header -->
     <div class="flex justify-between items-center mb-8">
       <div>
         <h1 class="text-5xl font-bold tracking-tight">SolAI Agent</h1>
         <p class="text-emerald-400 text-xl">Your free AI co-founder for Solana tokens</p>
       </div>
-
-      <!-- Hamburger Button -->
-      <button id="menu-btn" class="text-4xl px-4 py-1 hover:text-emerald-400 transition-colors">☰</button>
+      <button onclick="clearChat()" 
+              class="px-5 py-2 bg-zinc-900 hover:bg-red-500/10 hover:text-red-400 rounded-2xl flex items-center gap-2 text-sm font-medium">
+        🗑️ Clear Chat
+      </button>
     </div>
-
-    <!-- Mobile Menu -->
-<div id="mobile-menu" class="hidden bg-zinc-900 border border-zinc-700 rounded-3xl p-6 mb-8 flex flex-col gap-5 text-lg font-medium">
-  <a href="index.html" class="hover:text-emerald-400">🏠 Home (Chat)</a>
-  <a href="faq.html" class="hover:text-emerald-400">❓ FAQ</a>
-  <a href="changelog.html" class="hover:text-emerald-400">📜 Changelog</a>
-  <a href="https://x.com/solaiagent" target="_blank" class="hover:text-emerald-400">🐦 Follow on X</a>
-</div>
 
     <!-- Chat Container -->
     <div id="chat" class="bg-zinc-900 border border-zinc-800 rounded-3xl h-[560px] flex flex-col overflow-hidden shadow-2xl">
       
-      <!-- What's New Banner -->
+      <!-- NEW: What's New Banner -->
       <div class="bg-emerald-950/50 border-b border-emerald-400/30 px-6 py-3 text-sm flex items-center gap-2">
         <span class="text-emerald-400">🚀</span>
         <strong>What's New • March 31, 2026</strong>
@@ -84,7 +77,7 @@
       </div>
     </div>
 
-    <!-- Quick Start Cards (exactly as you had) -->
+    <!-- Quick Start Cards -->
     <div class="mt-8">
       <p class="text-zinc-400 text-sm mb-4 font-medium">Quick start — tap any card</p>
       <div class="grid grid-cols-2 gap-3">
@@ -170,6 +163,7 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
         
         if (m.role === "assistant") {
           let content = m.content.replace(/\n/g, '<br>');
+          // Auto-detect code blocks and add copy button
           content = content.replace(/```([\s\S]*?)```/g, (match, code) => {
             const cleanCode = code.trim();
             return `
@@ -187,6 +181,7 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       container.scrollTop = container.scrollHeight;
     }
 
+    // New: Copy code function
     window.copyCode = function(btn) {
       const pre = btn.parentElement.querySelector("pre code");
       const text = pre.textContent;
@@ -255,17 +250,13 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       }
     }
 
-    // Hamburger Menu Toggle
-    document.getElementById("menu-btn").addEventListener("click", () => {
-      document.getElementById("mobile-menu").classList.toggle("hidden");
-    });
-
     document.getElementById("form").addEventListener("submit", function(e) {
       e.preventDefault();
       const input = document.getElementById("input").value.trim();
       if (input) sendMessage(input);
     });
 
+    // Initialize
     document.addEventListener("DOMContentLoaded", () => {
       loadChat();
     });
