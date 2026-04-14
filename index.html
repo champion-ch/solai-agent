@@ -53,6 +53,34 @@
   </style>
 </head>
 <body class="bg-zinc-950 text-white min-h-screen">
+
+  <!-- API Key Settings Modal -->
+  <div id="api-key-modal" onclick="if(event.target.id === 'api-key-modal') hideApiKeyModal()" 
+       class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div onclick="event.stopImmediatePropagation()" 
+         class="modal bg-zinc-900 w-full max-w-md mx-4 rounded-3xl border border-zinc-700 shadow-2xl p-6">
+      <h2 class="text-2xl font-semibold mb-4">🔑 Groq API Key</h2>
+      <p class="text-zinc-400 text-sm mb-4">Paste your free Groq API key here.<br>It is saved only in your browser.</p>
+      
+      <input id="api-key-input" type="password" 
+             class="w-full bg-zinc-800 border border-zinc-700 focus:border-emerald-400 rounded-2xl px-4 py-3 text-white placeholder-zinc-400 mb-4"
+             placeholder="gsk_...">
+      
+      <div class="text-xs mb-6">
+        <a href="https://console.groq.com/keys" target="_blank" class="text-emerald-400 hover:underline">Get free Groq API key (30 seconds)</a>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="saveApiKey()" 
+                class="flex-1 bg-emerald-500 hover:bg-emerald-600 py-3 rounded-2xl font-medium">Save Key</button>
+        <button onclick="hideApiKeyModal()" 
+                class="flex-1 bg-zinc-800 hover:bg-zinc-700 py-3 rounded-2xl font-medium">Cancel</button>
+      </div>
+      
+      <p id="api-key-status" class="text-xs text-center mt-4 text-emerald-400"></p>
+    </div>
+  </div>
+
   <!-- Projects Modal (100% unchanged) -->
   <div id="projects-modal" onclick="if(event.target.id === 'projects-modal') hideProjectsModal()" 
        class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
@@ -87,7 +115,7 @@
   </div>
 
   <div class="max-w-4xl mx-auto px-4 py-8">
-    <!-- Header (100% unchanged) -->
+    <!-- Header -->
     <div class="flex justify-between items-center mb-8">
       <div class="flex items-center gap-3">
         <h1 class="text-5xl font-bold tracking-tight">SolAI Agent</h1>
@@ -99,6 +127,10 @@
       </div>
       
       <div class="flex items-center gap-3">
+        <button onclick="showApiKeyModal()" 
+                class="px-5 py-2 bg-zinc-900 hover:bg-emerald-500/10 hover:text-emerald-400 rounded-2xl flex items-center gap-2 text-sm font-medium">
+          🔑 API Key
+        </button>
         <button onclick="showProjectsModal()" 
                 class="px-5 py-2 bg-zinc-900 hover:bg-emerald-500/10 hover:text-emerald-400 rounded-2xl flex items-center gap-2 text-sm font-medium">
           📂 Projects
@@ -116,7 +148,7 @@
       <!-- What's New Banner (100% unchanged) -->
       <div class="bg-emerald-950/50 border-b border-emerald-400/30 px-6 py-3 text-sm flex items-center gap-2">
         <span class="text-emerald-400">🚀</span>
-        <strong>What's New • April 3, 2026</strong>
+        <strong>What's New • April 14, 2026</strong>
         <span class="flex-1"></span>
         <span class="text-emerald-400 text-xs">• Multi-project folders (My Tokens)</span>
         <span class="text-emerald-400 text-xs">• 5 Agent Modes</span>
@@ -212,7 +244,42 @@
   <input type="file" id="file-upload" accept=".rs,.json,.txt,.toml,.sol,.js,.ts,.md" class="hidden">
 
   <script>
-    const GROQ_API_KEY = "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";
+    // ==================== USER GROQ API KEY (fixes revocation forever) ====================
+    let GROQ_API_KEY = localStorage.getItem("solaiUserGroqKey") || "";
+
+    function showApiKeyModal() {
+      document.getElementById("api-key-modal").classList.remove("hidden");
+      document.getElementById("api-key-modal").classList.add("flex");
+      document.getElementById("api-key-input").value = GROQ_API_KEY;
+      document.getElementById("api-key-status").textContent = GROQ_API_KEY ? "✅ Key is set" : "";
+    }
+
+    function hideApiKeyModal() {
+      const modal = document.getElementById("api-key-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function saveApiKey() {
+      const input = document.getElementById("api-key-input").value.trim();
+      if (input) {
+        GROQ_API_KEY = input;
+        localStorage.setItem("solaiUserGroqKey", GROQ_API_KEY);
+        document.getElementById("api-key-status").textContent = "✅ Groq key saved successfully!";
+        setTimeout(hideApiKeyModal, 1200);
+      } else {
+        alert("Please enter your Groq API key");
+      }
+    }
+
+    function hasValidApiKey() {
+      if (!GROQ_API_KEY) {
+        alert("Please set your Groq API key first (click the 🔑 API Key button in the top right)");
+        showApiKeyModal();
+        return false;
+      }
+      return true;
+    }
 
     const baseSystemPrompt = `You are SolAI Agent — the ultimate AI for Solana token developers.
 You know everything about Pump.fun, bonding curves, Raydium liquidity, Jupiter, Anchor Rust, SPL tokens, metadata, revoking authorities, fair launches, marketing, TG bots, Twitter raids, KOLs, and rug-pull prevention.
@@ -425,11 +492,7 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       return baseSystemPrompt + (modes[currentMode] ? modes[currentMode].suffix : "");
     }
 
-    // ── NEW UPGRADE: Smart context trimming (prevents token overflow & "network/API" errors on long chats / heavy cards) ──
     function getContextMessages() {
-      // Full history stays in UI + storage
-      // Groq only receives the last 20 messages + system prompt
-      // This keeps every request small/fast even after 200+ messages or spamming the 6 cards
       if (messages.length <= 20) return messages;
       return messages.slice(-20);
     }
@@ -445,7 +508,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       }
     }
 
-    // ── UPGRADED: Faster rendering with DocumentFragment ──
     function renderMessages() {
       const container = document.getElementById("messages");
       container.innerHTML = "";
@@ -458,7 +520,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
         
         if (m.role === "assistant") {
           let content = m.content.replace(/\n/g, '<br>');
-          // Auto-detect code blocks and add copy button (unchanged logic)
           content = content.replace(/```([\s\S]*?)```/g, (match, code) => {
             const cleanCode = code.trim();
             return `
@@ -489,9 +550,8 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
     };
 
     // ── MAJOR UPGRADE: Streaming + retry + better error handling ──
-    // This completely fixes the "check your API key or network connection" error
-    // when using the 6 quick-start cards or long chats.
     async function sendMessage(userText) {
+      if (!hasValidApiKey()) return;
       if (!userText.trim()) return;
 
       messages.push({ role: "user", content: userText });
@@ -500,7 +560,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
 
       const container = document.getElementById("messages");
       
-      // Create live streaming message placeholder
       const assistantDiv = document.createElement("div");
       assistantDiv.className = `flex justify-start message`;
       assistantDiv.innerHTML = `
@@ -527,11 +586,11 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
               model: "llama-3.3-70b-versatile",
               messages: [
                 { role: "system", content: getCurrentSystemPrompt() },
-                ...getContextMessages()   // ← Smart trimming applied here
+                ...getContextMessages()
               ],
               temperature: 0.7,
-              max_tokens: 6000,           // ← Increased for full card responses
-              stream: true                // ← Streaming = no more timeouts on heavy cards
+              max_tokens: 6000,
+              stream: true
             })
           });
 
@@ -542,7 +601,7 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
               if (errData.error?.message) errorMsg = errData.error.message;
             } catch (_) {}
             
-            if (response.status === 401) errorMsg = "Invalid API key — please check the key in the code.";
+            if (response.status === 401) errorMsg = "Invalid API key — please check your key.";
             else if (response.status === 429) errorMsg = "Rate limited — retrying...";
             else if (response.status >= 500) errorMsg = "Groq server busy — retrying...";
 
@@ -553,7 +612,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
             throw new Error(errorMsg);
           }
 
-          // ── Streaming loop ──
           const reader = response.body.getReader();
           const decoder = new TextDecoder();
 
@@ -572,7 +630,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
                   const delta = parsed.choices[0]?.delta?.content || "";
                   if (delta) {
                     fullReply += delta;
-                    // Live update (plain text during stream)
                     const streamingContainer = document.getElementById("streaming-container");
                     if (streamingContainer) {
                       streamingContainer.innerHTML = fullReply.replace(/\n/g, "<br>") || `<span class="streaming">SolAI is typing</span>`;
@@ -584,12 +641,10 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
             }
           }
 
-          // Success — finalize the message with proper formatting & copy buttons
           break;
 
         } catch (e) {
           if (attempts >= maxAttempts) {
-            // Final failure
             assistantDiv.remove();
             messages.push({
               role: "assistant",
@@ -599,23 +654,12 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
             saveCurrentProject();
             return;
           }
-          // Retry on next loop
         }
       }
 
-      // Finalize streaming message
       assistantDiv.remove();
-      const processedContent = fullReply.replace(/\n/g, '<br>').replace(/```([\s\S]*?)```/g, (match, code) => {
-        const cleanCode = code.trim();
-        return `
-          <div class="relative group">
-            <pre class="bg-zinc-950 p-4 rounded-2xl overflow-x-auto text-sm border border-zinc-700"><code>${cleanCode}</code></pre>
-            <button onclick="copyCode(this)" class="copy-btn">📋 Copy</button>
-          </div>`;
-      });
-
       messages.push({ role: "assistant", content: fullReply });
-      renderMessages(); // Re-render with full formatting
+      renderMessages();
       saveCurrentProject();
     }
 
@@ -635,7 +679,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       }
     }
 
-    // ==================== FILE UPLOAD (100% unchanged) ====================
     function triggerFileUpload() {
       document.getElementById("file-upload").click();
     }
@@ -660,7 +703,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       reader.readAsText(file);
     }
 
-    // ==================== INITIALIZATION (100% unchanged except loadChat call) ====================
     document.getElementById("form").addEventListener("submit", function(e) {
       e.preventDefault();
       const input = document.getElementById("input").value.trim();
@@ -698,6 +740,13 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       }
 
       loadChat();
+
+      if (!GROQ_API_KEY) {
+        const welcome = document.createElement("div");
+        welcome.className = "text-center text-emerald-400 py-2 text-sm";
+        welcome.innerHTML = `👋 Welcome! Click the <strong>🔑 API Key</strong> button at the top right to enter your free Groq key and start using SolAI Agent.`;
+        document.getElementById("messages").appendChild(welcome);
+      }
     });
 
     function loadChat() {
