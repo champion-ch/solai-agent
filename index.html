@@ -149,20 +149,6 @@
         </div>
       </div>
 
-      <!-- Thin Token CA Section -->
-      <div style="padding: 12px 20px; background: #111; border-bottom: 1px solid #00ff9d; text-align: center; font-size: 0.95em;">
-        <p style="margin: 0 0 6px 0; font-weight: 600; color: #00ff9d;">
-          🔗 SolAI Agent Token ($SAIA)
-        </p>
-        <p id="ca-display" style="margin: 0 0 8px 0; font-family: monospace; word-break: break-all; color: #aaaaaa;">
-          Coming Soon...
-        </p>
-        <button onclick="copyCA()" 
-                style="padding: 7px 18px; background: #00ff9d; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9em;">
-          📋 Copy Address
-        </button>
-      </div>
-
       <div id="messages" class="flex-1 p-6 overflow-y-auto space-y-6"></div>
 
       <div class="p-5 border-t border-zinc-800">
@@ -230,7 +216,21 @@
       </div>
     </div>
 
-    <p class="text-center text-xs text-zinc-500 mt-10">
+    <!-- Token CA Section - Moved to bottom, thin & clean -->
+    <div style="margin: 30px 0 20px 0; padding: 14px 20px; background: #111; border: 1px solid #00ff9d; border-radius: 12px; text-align: center;">
+      <p style="margin: 0 0 8px 0; font-weight: 600; color: #00ff9d; font-size: 1.05em;">
+        🔗 SolAI Agent Token ($SAIA)
+      </p>
+      <p id="ca-display" style="margin: 0 0 10px 0; font-family: monospace; word-break: break-all; color: #aaaaaa; font-size: 0.93em;">
+        Coming Soon...
+      </p>
+      <button onclick="copyCA()" 
+              style="padding: 8px 20px; background: #00ff9d; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+        📋 Copy Address
+      </button>
+    </div>
+
+    <p class="text-center text-xs text-zinc-500 mt-6">
       Powered by Groq • 100% free • Made by @champion-ch • 
       <a href="https://x.com/solaiagent" target="_blank" class="text-emerald-400 hover:underline">Follow on X</a>
     </p>
