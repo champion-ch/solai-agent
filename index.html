@@ -11,7 +11,6 @@
     .message { animation: fadeIn 0.3s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
-    /* Copy button style */
     .copy-btn {
       position: absolute;
       top: 8px;
@@ -32,7 +31,6 @@
       color: #111;
     }
 
-    /* Modal */
     .modal {
       animation: modalPop 0.3s ease;
     }
@@ -41,12 +39,10 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* Mode pills */
     .mode-pill {
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Streaming message style */
     .streaming {
       animation: streamPulse 1.5s infinite;
     }
@@ -148,22 +144,21 @@
         <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
         <p class="font-medium">SolAI is online • Ready to build your next token</p>
         
-        <!-- Mode Selector -->
         <div class="ml-auto flex items-center gap-1 text-xs font-medium" id="mode-selector">
           <!-- Populated by JS -->
         </div>
       </div>
 
-      <!-- NEW: SolAI Agent Token CA Section (replaces What's New) -->
-      <div style="margin: 0; padding: 16px; background: #0f0f0f; border-bottom: 1px solid #00ff9d; text-align: center;">
-        <p style="margin: 0 0 10px 0; font-weight: bold; color: #00ff9d; font-size: 1.1em;">
+      <!-- Thin Token CA Section -->
+      <div style="padding: 12px 20px; background: #111; border-bottom: 1px solid #00ff9d; text-align: center; font-size: 0.95em;">
+        <p style="margin: 0 0 6px 0; font-weight: 600; color: #00ff9d;">
           🔗 SolAI Agent Token ($SAIA)
         </p>
-        <p id="ca-display" style="margin: 0 0 12px 0; font-family: monospace; word-break: break-all; color: #aaaaaa; font-size: 0.95em;">
+        <p id="ca-display" style="margin: 0 0 8px 0; font-family: monospace; word-break: break-all; color: #aaaaaa;">
           Coming Soon...
         </p>
         <button onclick="copyCA()" 
-                style="padding: 10px 20px; background: #00ff9d; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                style="padding: 7px 18px; background: #00ff9d; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9em;">
           📋 Copy Address
         </button>
       </div>
@@ -187,7 +182,7 @@
       </div>
     </div>
 
-    <!-- Quick Start Cards (unchanged) -->
+    <!-- Quick Start Cards -->
     <div class="mt-8">
       <p class="text-zinc-400 text-sm mb-4 font-medium">Quick start — tap any card</p>
       <div class="grid grid-cols-2 gap-3">
@@ -241,11 +236,9 @@
     </p>
   </div>
 
-  <!-- Hidden file input -->
   <input type="file" id="file-upload" accept=".rs,.json,.txt,.toml,.sol,.js,.ts,.md" class="hidden">
 
   <script>
-    // ==================== USER GROQ API KEY (fixes revocation forever) ====================
     let GROQ_API_KEY = localStorage.getItem("solaiUserGroqKey") || "";
 
     function showApiKeyModal() {
@@ -300,7 +293,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
     let currentMode = "default";
     let messages = [];
 
-    // ==================== INDEXEDDB SETUP ====================
     function initDB() {
       return new Promise((resolve, reject) => {
         const request = indexedDB.open("SolAIProjects", 1);
@@ -705,7 +697,7 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
 
     window.copyCA = function() {
       if (contractAddress === "Coming Soon...") {
-        alert("🚀 Token launches at 10:00 PM Kabul time tonight!\nCA will appear here right after launch.");
+        alert("Token address will be available after launch.");
         return;
       }
       navigator.clipboard.writeText(contractAddress).then(() => {
