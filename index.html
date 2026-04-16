@@ -46,7 +46,7 @@
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* ── UPGRADE: Streaming message style ── */
+    /* Streaming message style */
     .streaming {
       animation: streamPulse 1.5s infinite;
     }
@@ -81,7 +81,7 @@
     </div>
   </div>
 
-  <!-- Projects Modal (100% unchanged) -->
+  <!-- Projects Modal -->
   <div id="projects-modal" onclick="if(event.target.id === 'projects-modal') hideProjectsModal()" 
        class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
     <div onclick="event.stopImmediatePropagation()" 
@@ -96,14 +96,12 @@
       </div>
       
       <div class="p-6">
-        <!-- New Project Button -->
         <button onclick="createNewProject()" 
                 class="w-full flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-3xl font-medium text-lg mb-6">
           <span class="text-2xl">✚</span>
           NEW TOKEN PROJECT
         </button>
 
-        <!-- Projects List -->
         <div id="projects-list" class="max-h-[420px] overflow-y-auto space-y-2 pr-2"></div>
       </div>
       
@@ -145,17 +143,7 @@
     <!-- Chat Container -->
     <div id="chat" class="bg-zinc-900 border border-zinc-800 rounded-3xl h-[560px] flex flex-col overflow-hidden shadow-2xl">
       
-      <!-- What's New Banner (100% unchanged) -->
-      <div class="bg-emerald-950/50 border-b border-emerald-400/30 px-6 py-3 text-sm flex items-center gap-2">
-        <span class="text-emerald-400">🚀</span>
-        <strong>What's New • April 14, 2026</strong>
-        <span class="flex-1"></span>
-        <span class="text-emerald-400 text-xs">• Multi-project folders (My Tokens)</span>
-        <span class="text-emerald-400 text-xs">• 5 Agent Modes</span>
-        <span class="text-emerald-400 text-xs">• File uploads (code + metadata)</span>
-        <span class="text-emerald-400 text-xs">• Copy buttons on all code blocks</span>
-      </div>
-
+      <!-- Status Bar -->
       <div class="bg-zinc-950 px-6 py-4 border-b border-zinc-800 flex items-center gap-3">
         <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
         <p class="font-medium">SolAI is online • Ready to build your next token</p>
@@ -166,11 +154,24 @@
         </div>
       </div>
 
+      <!-- NEW: SolAI Agent Token CA Section (replaces What's New) -->
+      <div style="margin: 0; padding: 16px; background: #0f0f0f; border-bottom: 1px solid #00ff9d; text-align: center;">
+        <p style="margin: 0 0 10px 0; font-weight: bold; color: #00ff9d; font-size: 1.1em;">
+          🔗 SolAI Agent Token ($SAIA)
+        </p>
+        <p id="ca-display" style="margin: 0 0 12px 0; font-family: monospace; word-break: break-all; color: #aaaaaa; font-size: 0.95em;">
+          Coming Soon...
+        </p>
+        <button onclick="copyCA()" 
+                style="padding: 10px 20px; background: #00ff9d; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          📋 Copy Address
+        </button>
+      </div>
+
       <div id="messages" class="flex-1 p-6 overflow-y-auto space-y-6"></div>
 
       <div class="p-5 border-t border-zinc-800">
         <form id="form" class="flex gap-3 items-center">
-          <!-- File Upload Button -->
           <button type="button" onclick="triggerFileUpload()" 
                   class="px-5 py-4 bg-zinc-800 hover:bg-zinc-700 rounded-3xl text-2xl flex items-center justify-center transition-all">
             📎
@@ -186,7 +187,7 @@
       </div>
     </div>
 
-    <!-- Quick Start Cards (100% unchanged) -->
+    <!-- Quick Start Cards (unchanged) -->
     <div class="mt-8">
       <p class="text-zinc-400 text-sm mb-4 font-medium">Quick start — tap any card</p>
       <div class="grid grid-cols-2 gap-3">
@@ -285,7 +286,6 @@
 You know everything about Pump.fun, bonding curves, Raydium liquidity, Jupiter, Anchor Rust, SPL tokens, metadata, revoking authorities, fair launches, marketing, TG bots, Twitter raids, KOLs, and rug-pull prevention.
 Always give step-by-step help, generate code when asked, and act like a helpful co-founder. Be direct and based.`;
 
-    // Agent Modes (100% unchanged)
     const modes = {
       default: { label: "🤖 Default", suffix: "" },
       builder: { label: "🛠️ Builder", suffix: "\n\nYou are in BUILDER MODE. Prioritize complete, production-ready Anchor Rust code, SPL token programs, tests, Cargo.toml, and deployment instructions." },
@@ -300,7 +300,7 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
     let currentMode = "default";
     let messages = [];
 
-    // ==================== INDEXEDDB SETUP (100% unchanged) ====================
+    // ==================== INDEXEDDB SETUP ====================
     function initDB() {
       return new Promise((resolve, reject) => {
         const request = indexedDB.open("SolAIProjects", 1);
@@ -450,7 +450,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       modal.classList.remove("flex");
     }
 
-    // ==================== MODE SELECTOR (100% unchanged) ====================
     function renderModeSelector() {
       const container = document.getElementById("mode-selector");
       container.innerHTML = Object.keys(modes).map(key => {
@@ -487,7 +486,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       setTimeout(() => systemMsg.remove(), 1800);
     }
 
-    // ==================== UPGRADED CHAT FUNCTIONS ====================
     function getCurrentSystemPrompt() {
       return baseSystemPrompt + (modes[currentMode] ? modes[currentMode].suffix : "");
     }
@@ -549,7 +547,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       });
     };
 
-    // ── MAJOR UPGRADE: Streaming + retry + better error handling ──
     async function sendMessage(userText) {
       if (!hasValidApiKey()) return;
       if (!userText.trim()) return;
@@ -703,6 +700,29 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
       reader.readAsText(file);
     }
 
+    // ==================== TOKEN CA FUNCTIONS ====================
+    let contractAddress = "Coming Soon...";
+
+    window.copyCA = function() {
+      if (contractAddress === "Coming Soon...") {
+        alert("🚀 Token launches at 10:00 PM Kabul time tonight!\nCA will appear here right after launch.");
+        return;
+      }
+      navigator.clipboard.writeText(contractAddress).then(() => {
+        const btn = event.target;
+        const original = btn.textContent;
+        btn.textContent = "✅ Copied!";
+        setTimeout(() => btn.textContent = original, 2000);
+      });
+    };
+
+    window.updateCA = function(newCA) {
+      contractAddress = newCA;
+      document.getElementById('ca-display').textContent = newCA;
+      alert("✅ CA updated on the website!");
+    };
+
+    // ==================== INIT ====================
     document.getElementById("form").addEventListener("submit", function(e) {
       e.preventDefault();
       const input = document.getElementById("input").value.trim();
@@ -739,7 +759,8 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
         switchProject(projects[0].id);
       }
 
-      loadChat();
+      renderMessages();
+      renderModeSelector();
 
       if (!GROQ_API_KEY) {
         const welcome = document.createElement("div");
@@ -748,11 +769,6 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
         document.getElementById("messages").appendChild(welcome);
       }
     });
-
-    function loadChat() {
-      renderMessages();
-      renderModeSelector();
-    }
   </script>
 </body>
 </html>
