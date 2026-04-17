@@ -216,18 +216,27 @@
       </div>
     </div>
 
-    <!-- Token CA Section - Moved to bottom, thin & clean -->
+    <!-- Token CA Section - Updated with real CA -->
     <div style="margin: 30px 0 20px 0; padding: 14px 20px; background: #111; border: 1px solid #00ff9d; border-radius: 12px; text-align: center;">
       <p style="margin: 0 0 8px 0; font-weight: 600; color: #00ff9d; font-size: 1.05em;">
         🔗 SolAI Agent Token ($SAIA)
       </p>
       <p id="ca-display" style="margin: 0 0 10px 0; font-family: monospace; word-break: break-all; color: #aaaaaa; font-size: 0.93em;">
-        Coming Soon...
+        dyPsGx7pWaBpAKpv2eMBKipbMGSman3Kn8aLrCvpump
       </p>
-      <button onclick="copyCA()" 
-              style="padding: 8px 20px; background: #00ff9d; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-        📋 Copy Address
-      </button>
+      
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <a href="https://pump.fun/dyPsGx7pWaBpAKpv2eMBKipbMGSman3Kn8aLrCvpump" 
+           target="_blank"
+           style="padding: 8px 20px; background: #00ff9d; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none;">
+          🚀 Buy on pump.fun
+        </a>
+        
+        <button onclick="copyCA()" 
+                style="padding: 8px 20px; background: #00ff9d; color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+          📋 Copy CA
+        </button>
+      </div>
     </div>
 
     <p class="text-center text-xs text-zinc-500 mt-6">
@@ -693,25 +702,15 @@ Always give step-by-step help, generate code when asked, and act like a helpful 
     }
 
     // ==================== TOKEN CA FUNCTIONS ====================
-    let contractAddress = "Coming Soon...";
+    let contractAddress = "dyPsGx7pWaBpAKpv2eMBKipbMGSman3Kn8aLrCvpump";
 
     window.copyCA = function() {
-      if (contractAddress === "Coming Soon...") {
-        alert("Token address will be available after launch.");
-        return;
-      }
       navigator.clipboard.writeText(contractAddress).then(() => {
         const btn = event.target;
         const original = btn.textContent;
         btn.textContent = "✅ Copied!";
         setTimeout(() => btn.textContent = original, 2000);
       });
-    };
-
-    window.updateCA = function(newCA) {
-      contractAddress = newCA;
-      document.getElementById('ca-display').textContent = newCA;
-      alert("✅ CA updated on the website!");
     };
 
     // ==================== INIT ====================
